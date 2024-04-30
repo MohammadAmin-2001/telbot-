@@ -1,5 +1,6 @@
 from telegram import Update
-from telegram.ext import MessageHandler, Application, CommandHandler, ContextTypes
+from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram import KeyboardButton, ReplyKeyboardMarkup
 from dotenv import load_dotenv
 from os import getenv
 import logging
@@ -25,24 +26,41 @@ class Telegram:
     def token(self):
         return self.__token
 
-    async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        keys = [
+            [
+                KeyboardButton(text="show my jobs"),
+                KeyboardButton(text="insert my jobs"),
+                 ]
+                ]
+        markup = ReplyKeyboardMarkup(
+            keyboard=keys,
+            resize_keyboard=True,
+            one_time_keyboard=True,
+            input_field_placeholder="Please selecet your order :)"
+        )
         await (
             context.bot.send_message
             (
               chat_id=update.effective_chat.id,
-              text=f"hello {update.effective_user.full_name}",
-              reply_to_message_id=update.effective_message.id)
+              text=f"hello {update.effective_user.full_name} how can i do for you?",
+              reply_to_message_id=update.effective_message.id,
+              reply_markup=markup
+            )
         )
 
 
 def main() -> None:
     tel_instance = Telegram()
     app = Application.builder().token(tel_instance.token).build()
-    start_command = CommandHandler("start", tel_instance.start)
-    app.add_handler(start_command)
-    app.run_polling(poll_interval=3)
+
+    app.add_handlers(
+        [
+            CommandHandler("start", tel_instance.start_command)
+        ]
+    )
+    app.run_polling()
 
 
 if __name__ == "__main__":
     main()
-
