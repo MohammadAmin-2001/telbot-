@@ -1,5 +1,5 @@
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import ContextTypes
 from telegram import KeyboardButton, ReplyKeyboardMarkup
 from dotenv import load_dotenv
 from os import getenv
@@ -49,18 +49,7 @@ class Telegram:
             )
         )
 
-
-def main() -> None:
-    tel_instance = Telegram()
-    app = Application.builder().token(tel_instance.token).build()
-
-    app.add_handlers(
-        [
-            CommandHandler("start", tel_instance.start_command)
-        ]
-    )
-    app.run_polling()
+    # async def error_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    #     await update.message.reply_text("error")
 
 
-if __name__ == "__main__":
-    main()
